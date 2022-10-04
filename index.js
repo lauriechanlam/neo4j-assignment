@@ -28,13 +28,24 @@ const isValidPyramid = (pyramid) => {
   }
 }
 
-const getFastestPath = (pyramid) => pyramid.length !== 0 ? getFastestPathAt(pyramid, 0, 0) : 0
-
-const getFastestPathAt = (pyramid, x, y) => {
-  if (y === pyramid.length - 1) {
-    return pyramid[y][x]
+const getFastestPath = (pyramid) => {
+  if (!isValidPyramid(pyramid)) {
+    throw new Error('Cannot compute fastest path for invalid pyramid')
   }
-  return pyramid[y][x] + Math.min(getFastestPathAt(pyramid, x, y + 1), getFastestPathAt(pyramid, x + 1, y + 1))
+
+  if (pyramid.length === 0) {
+    return 0
+  }
+
+  const initialValues = Array.apply(null, Array(pyramid.length + 1))
+  initialValues.fill(0)
+
+  const callback = (sums, _, layerIndex) => {
+    const layer = pyramid[pyramid.length - layerIndex - 1]
+    return layer.map((friction, index) => friction + Math.min(sums[index], sums[index + 1]))
+  }
+
+  return pyramid.reduce(callback, initialValues)[0]
 }
 
 module.exports = { makePyramid, getFastestPath }
