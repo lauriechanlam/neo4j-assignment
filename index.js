@@ -28,7 +28,16 @@ const isValidPyramid = (pyramid) => {
   }
 }
 
-module.exports = { makePyramid }
+const getFastestPath = (pyramid) => pyramid.length !== 0 ? getFastestPathAt(pyramid, 0, 0) : 0
+
+const getFastestPathAt = (pyramid, x, y) => {
+  if (y === pyramid.length - 1) {
+    return pyramid[y][x]
+  }
+  return pyramid[y][x] + Math.min(getFastestPathAt(pyramid, x, y + 1), getFastestPathAt(pyramid, x + 1, y + 1))
+}
+
+module.exports = { makePyramid, getFastestPath }
 
 if (process.env.NODE_ENV !== 'test') {
   const filename = process.env.FILENAME
@@ -36,5 +45,7 @@ if (process.env.NODE_ENV !== 'test') {
     throw new Error('please set the environment variable FILENAME in order to run this script')
   }
   const content = fs.readFileSync(filename, 'utf-8')
-  makePyramid(content)
+  const pyramid = makePyramid(content)
+  const fastestPath = getFastestPath(pyramid)
+  console.log(`"${filename}" has minimum friction of ${fastestPath}`)
 }
