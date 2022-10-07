@@ -1,5 +1,13 @@
 const fs = require('fs')
 
+const parseIntOrThrow = (str) => {
+  const value = parseInt(str)
+  if (isNaN(value)) {
+    throw Error(`cannot parse "${str}" as integer`)
+  }
+  return value
+}
+
 const makePyramid = (str) => {
   const layers = str.split('\n')
   if (layers.length === 0) {
@@ -8,8 +16,8 @@ const makePyramid = (str) => {
   if (layers[layers.length - 1] === '') {
     layers.pop()
   }
-  const layerCount = parseInt(layers[0])
-  const pyramid = layers.slice(1).map((layer) => layer.split(' ').map((friction) => parseInt(friction)))
+  const layerCount = parseIntOrThrow(layers[0])
+  const pyramid = layers.slice(1).map((layer) => layer.split(' ').map((friction) => parseIntOrThrow(friction)))
   if (layers.length - 1 !== layerCount) {
     throw new Error(`actual pyramid layer count (${layers.length - 1}) should be match declared layer count (${layerCount})`)
   }
